@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using System.Runtime.Serialization;
-using System.Runtime.Serialization.Json;
+using System.Xml;
 
 namespace Flarial.Launcher.App;
 
@@ -16,17 +16,22 @@ internal sealed class Configuration
     [DataMember]
     internal bool Desktop = default;
 
-    static readonly DataContractJsonSerializer Serializer = new(typeof(Configuration), new DataContractJsonSerializerSettings() { UseSimpleDictionaryFormat = true });
+    [DataMember]
+    internal string Custom = string.Empty;
+
+    static readonly DataContractSerializer Serializer = new(typeof(Configuration));
+
+    static readonly XmlWriterSettings Settings = new() { Indent = true };
 
     internal static Configuration Get()
     {
         try
         {
-            using var stream = File.OpenRead("Configuration.json");
-            var value = (Configuration)Serializer.ReadObject(stream);
+            using var stream = File.OpenRead("Configuration.xml");
+            var @this = (Configuration)Serializer.ReadObject(stream);
 
-            if (!Enum.IsDefined(typeof(Builds), value.Build)) value.Build = default;
-            return value;
+            if (!Enum.IsDefined(typeof(Builds), @this.Build)) @this.Build = default;
+            return @this;
         }
         catch { }
         return new();
@@ -34,7 +39,7 @@ internal sealed class Configuration
 
     internal void Save()
     {
-        using var stream = File.Create("Configuration.json");
-        Serializer.WriteObject(stream, this);
+        using var writer = XmlWriter.Create("Configuration.xml", Settings);
+        Serializer.WriteObject(writer, this);
     }
 }

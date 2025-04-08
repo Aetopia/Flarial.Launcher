@@ -30,7 +30,7 @@ sealed class Settings : SimpleStackPanel
 
         Build.Items.Add("Release");
         Build.Items.Add("Beta");
-              Build.Items.Add("Custom");
+        Build.Items.Add("Custom");
         Build.SelectedIndex = (int)Configuration.Build;
 
         Desktop.IsOn = Configuration.Desktop;
