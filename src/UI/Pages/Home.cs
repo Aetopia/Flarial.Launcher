@@ -63,6 +63,7 @@ sealed class Home : Grid
         {
             if (!Game.Installed)
             {
+                Log.Current.Write("Minecraft isn't installed.");
                 await Dialogs.Installed.ShowAsync();
                 return;
             }
@@ -73,6 +74,8 @@ sealed class Home : Grid
 
             if (_.Build is Build.Release or Build.Beta)
             {
+                Log.Current.Write($"Trying to launch {(_.Build is Build.Beta ? "Beta" : "Release")}.");
+
                 await Client.DownloadAsync(_.Build is Build.Beta, (_) => Dispatcher.Invoke(() =>
                 {
                     if (ProgressBar.Value == _) return;
@@ -81,16 +84,22 @@ sealed class Home : Grid
                 }));
 
                 TextBlock.Text = "Launching..."; ProgressBar.IsIndeterminate = true;
+
+                Log.Current.Write($"Launching Minecraft with Flarial Client.");
                 await Client.LaunchAsync(_.Build is Build.Beta);
             }
             else
             {
+                Log.Current.Write($"Trying to use '{_.Custom} as the custom DLL.'");
+
                 if (!string.IsNullOrEmpty(_.Custom))
                 {
                     Library value = new(_.Custom);
                     if (value.Valid)
                     {
                         TextBlock.Text = "Launching...";
+
+                        Log.Current.Write($"Launching Minecraft with Custom DLL.");
                         await Task.Run(() => Loader.Launch(value));
                     }
                     else await Dialogs.Loader.ShowAsync();
@@ -109,18 +118,22 @@ sealed class Home : Grid
         Application.Current.MainWindow.ContentRendered += async (_, _) =>
         {
             await Task.Run(() => _ = Configuration.Current);
+
+            Log.Current.Write("Acquire the latest version catalog.");
             var catalog = await Catalog.GetAsync();
 
             Button.Visibility = Visibility.Visible;
             ProgressBar.Visibility = TextBlock.Visibility = Visibility.Collapsed;
 
-            TextBlock.Text = "Preparing";
+            TextBlock.Text = "Preparing...";
             ProgressBar.Value = default;
             ProgressBar.IsIndeterminate = true;
 
             @this.Versions = new(catalog);
             @this.Settings = new();
             @this.IsEnabled = true;
+
+            Log.Current.Write("The launcher is now ready to use.");
         };
     }
 }

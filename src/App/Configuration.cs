@@ -46,7 +46,13 @@ sealed class Configuration
                         Object = (Configuration)Serializer.ReadObject(stream);
                         if (!Enum.IsDefined(typeof(Build), Object.Build)) Object.Build = default;
                     }
-                    catch { Object = new(); }
+                    catch (Exception _)
+                    {
+                        Log.Current.Write($"{_}");
+                        Object = new();
+                    }
+
+                    Log.Current.Write($"Configuration is \"Build: {Object.Build}, Debug: {Object.Debug}, Custom: '{Object.Custom}'\".");
                 }
             }
             return Object;
@@ -55,6 +61,7 @@ sealed class Configuration
 
     internal static void Save()
     {
+        Log.Current.Write($"Configuration is \"Build: {Object.Build}, Debug: {Object.Debug}, Custom: '{Object.Custom}'\".");
         using var writer = XmlWriter.Create("Configuration.xml", Settings);
         Serializer.WriteObject(writer, Current);
     }

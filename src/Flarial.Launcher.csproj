@@ -21,9 +21,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Costura.Fody" Version="*" PrivateAssets="All" />
-    <PackageReference Include="Flarial.Launcher.SDK" Version="*" />
-    <PackageReference Include="ModernWpfUI" Version="*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Costura.Fody" Version="6.0.0" PrivateAssets="All" />
+    <PackageReference Include="Flarial.Launcher.SDK" Version="1.5.3" />
+    <PackageReference Include="ModernWpfUI" Version="0.9.6" />
   </ItemGroup>
 
 </Project>
