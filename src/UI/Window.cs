@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using System.Windows;
+using Flarial.Launcher.App;
 using ModernWpf;
 using ModernWpf.Controls.Primitives;
 
@@ -12,8 +13,8 @@ sealed class Window : System.Windows.Window
         WindowHelper.SetUseModernWindowStyle(this, true);
         ThemeManager.SetRequestedTheme(this, ElementTheme.Dark);
 
-        Icon = App.Embedded.Icon;
-        Title = "Flarial Launcher";
+        Icon = Manifest.Icon;
+        Title = $"Flarial Launcher {Manifest.Version}";
         Width = 960 * 0.75; Height = 540 * 0.75;
         UseLayoutRounding = SnapsToDevicePixels = true;
         WindowStartupLocation = WindowStartupLocation.CenterScreen;

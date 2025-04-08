@@ -8,41 +8,47 @@ sealed class Settings : SimpleStackPanel
 {
     readonly RadioButtons Build = new()
     {
-        Header = "Select what dynamic link library should be used:",
-        VerticalAlignment = VerticalAlignment.Center,
+        Header = "Select what DLL should be used:",
+        VerticalAlignment = VerticalAlignment.Stretch,
         HorizontalAlignment = HorizontalAlignment.Stretch
     };
 
-    readonly ToggleSwitch Desktop = new()
+    readonly ToggleSwitch Debug = new()
     {
         Header = "Prevent the game from being suspended when minimized.",
-        VerticalAlignment = VerticalAlignment.Center,
+        VerticalAlignment = VerticalAlignment.Stretch,
+        HorizontalAlignment = HorizontalAlignment.Stretch
+    };
+
+    readonly Controls.Custom Custom = new()
+    {
+        VerticalAlignment = VerticalAlignment.Stretch,
         HorizontalAlignment = HorizontalAlignment.Stretch
     };
 
     internal Settings()
     {
-        var configuration = Configuration.Current;
+        var _ = Configuration.Current;
 
-        Spacing = 12; Margin = new(12);
+        Spacing = (Margin = new(12)).Left;
 
         Build.Items.Add("Release");
         Build.Items.Add("Beta");
-        Build.SelectedIndex = (int)configuration.Build;
-
-        Desktop.IsOn = configuration.Desktop;
+        Build.Items.Add("Custom");
 
         Children.Add(Build);
-        Children.Add(Desktop);
+        Children.Add(Custom);
+        Children.Add(Debug);
 
         Build.SelectionChanged += (_, _) =>
         {
             var index = Build.SelectedIndex; if (index is -1) return;
-            configuration.Build = (Builds)index;
+            Custom.IsEnabled = (_.Build = (Build)index) is App.Build.Custom;
         };
 
-        Desktop.Toggled += (_, _) => configuration.Desktop = Desktop.IsOn;
+        Debug.Toggled += (_, _) => { _.Debug = Debug.IsOn; };
 
-        Application.Current.Exit += (_, _) => Configuration.Save();
+        Build.SelectedIndex = (int)_.Build;
+        Debug.IsOn = _.Debug;
     }
 }

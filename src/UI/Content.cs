@@ -7,6 +7,8 @@ sealed class Content : NavigationView
 {
     internal Pages.Home Home;
 
+    internal Pages.Versions Versions;
+
     internal Pages.Settings Settings;
 
     internal Content()
@@ -14,7 +16,7 @@ sealed class Content : NavigationView
         IsSettingsVisible = IsEnabled = default;
         IsBackButtonVisible = NavigationViewBackButtonVisible.Collapsed;
         PaneDisplayMode = NavigationViewPaneDisplayMode.Top;
-        Content = new Startup(this);
+        Content = Home = new(this);
 
         MenuItems.Add(new NavigationViewItem
         {
@@ -22,6 +24,13 @@ sealed class Content : NavigationView
             Content = "Home",
             Tag = Symbol.Home,
             IsSelected = true
+        });
+
+        MenuItems.Add(new NavigationViewItem
+        {
+            Icon = new SymbolIcon(Symbol.Library),
+            Content = "Versions",
+            Tag = Symbol.Library,
         });
 
         FooterMenuItems.Add(new NavigationViewItem
@@ -37,6 +46,10 @@ sealed class Content : NavigationView
             {
                 case Symbol.Home:
                     Content = Home;
+                    break;
+
+                case Symbol.Library:
+                    Content = Versions;
                     break;
 
                 case Symbol.Setting:

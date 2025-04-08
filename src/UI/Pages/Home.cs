@@ -5,79 +5,122 @@ using ModernWpf.Controls;
 using Modern = ModernWpf.Controls;
 using System.Windows.Controls;
 using System.Threading.Tasks;
+using Flarial.Launcher.SDK;
+using Bedrockix.Windows;
+using Bedrockix.Minecraft;
 
 namespace Flarial.Launcher.UI.Pages;
 
 sealed class Home : Grid
 {
-    internal Home()
+    readonly Image Image = new()
     {
-        Image image = new()
+        Source = Manifest.Icon,
+        Width = Manifest.Icon.Width / 2,
+        Height = Manifest.Icon.Height / 2,
+        VerticalAlignment = VerticalAlignment.Center,
+        Margin = new(0, 0, 0, 75)
+    };
+
+    readonly Modern.ProgressBar ProgressBar = new()
+    {
+        Width = Manifest.Icon.Width * 2,
+        Foreground = new SolidColorBrush(Colors.White),
+        VerticalAlignment = VerticalAlignment.Center,
+        HorizontalAlignment = HorizontalAlignment.Center,
+        IsIndeterminate = true,
+        Margin = new(0, 125, 0, 0),
+        Visibility = Visibility.Visible
+    };
+
+    readonly TextBlock TextBlock = new()
+    {
+        Text = "Preparing...",
+        VerticalAlignment = VerticalAlignment.Center,
+        HorizontalAlignment = HorizontalAlignment.Center,
+        Margin = new(0, 175, 0, 0),
+        Visibility = Visibility.Visible
+    };
+
+    readonly Button Button = new()
+    {
+        VerticalAlignment = VerticalAlignment.Center,
+        HorizontalAlignment = HorizontalAlignment.Center,
+        Content = new SymbolIcon(Symbol.Play),
+        Width = Manifest.Icon.Width * 2,
+        Margin = new(0, 125, 0, 0),
+        Visibility = Visibility.Collapsed
+    };
+
+    internal Home(Content @this)
+    {
+        Children.Add(Image);
+        Children.Add(ProgressBar);
+        Children.Add(TextBlock);
+        Children.Add(Button);
+
+        Button.Click += async (_, _) =>
         {
-            Source = Embedded.Icon,
-            Width = Embedded.Icon.Width / 2,
-            Height = Embedded.Icon.Height / 2,
-            VerticalAlignment = VerticalAlignment.Center,
-            Margin = new(0, 0, 0, 75),
-        };
-
-        Modern.ProgressBar progressBar = new()
-        {
-            Width = Embedded.Icon.Width * 2,
-            Foreground = new SolidColorBrush(Colors.White),
-            VerticalAlignment = VerticalAlignment.Center,
-            HorizontalAlignment = HorizontalAlignment.Center,
-            IsIndeterminate = true,
-            Margin = new(0, 125, 0, 0),
-            Visibility = Visibility.Collapsed
-        };
-
-        TextBlock textBlock = new()
-        {
-            Text = "Preparing...",
-            VerticalAlignment = VerticalAlignment.Center,
-            HorizontalAlignment = HorizontalAlignment.Center,
-            Margin = new(0, 175, 0, 0),
-            Visibility = Visibility.Collapsed
-        };
-
-        Button button = new()
-        {
-            VerticalAlignment = VerticalAlignment.Center,
-            HorizontalAlignment = HorizontalAlignment.Center,
-            Content = new SymbolIcon(Symbol.Play),
-            Width = Embedded.Icon.Width * 2,
-            Margin = new(0, 125, 0, 0),
-        };
-
-        SetRow(image, default); Children.Add(image);
-        SetRow(progressBar, default); Children.Add(progressBar);
-        SetRow(textBlock, default); Children.Add(textBlock);
-        SetRow(button, default); Children.Add(button);
-
-        button.Click += async (_, _) =>
-        {
-            button.Visibility = Visibility.Collapsed;
-            progressBar.Visibility = textBlock.Visibility = Visibility.Visible;
-
-            var build = Configuration.Current.Build;
-
-            if (build is Builds.Release or Builds.Beta)
+            if (!Game.Installed)
             {
-                await SDK.Client.DownloadAsync(build is Builds.Beta, (_) => Dispatcher.Invoke(() =>
-                {
-                    if (progressBar.Value == _) return;
-                    if (progressBar.IsIndeterminate) progressBar.IsIndeterminate = false;
-                    textBlock.Text = $"Downloading.. {progressBar.Value = _}%";
-                }));
+                await Dialogs.Installed.ShowAsync();
+                return;
             }
 
-            button.Visibility = Visibility.Visible;
-            progressBar.Visibility = textBlock.Visibility = Visibility.Collapsed;
+            var _ = Configuration.Current;
+            Button.Visibility = Visibility.Collapsed;
+            ProgressBar.Visibility = TextBlock.Visibility = Visibility.Visible;
 
-            textBlock.Text = "Preparing";
-            progressBar.Value = default;
-            progressBar.IsIndeterminate = true;
+            if (_.Build is Build.Release or Build.Beta)
+            {
+                await Client.DownloadAsync(_.Build is Build.Beta, (_) => Dispatcher.Invoke(() =>
+                {
+                    if (ProgressBar.Value == _) return;
+                    if (ProgressBar.IsIndeterminate) ProgressBar.IsIndeterminate = false;
+                    TextBlock.Text = $"Downloading.. {ProgressBar.Value = _}%";
+                }));
+
+                TextBlock.Text = "Launching..."; ProgressBar.IsIndeterminate = true;
+                await Client.LaunchAsync(_.Build is Build.Beta);
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(_.Custom))
+                {
+                    Library value = new(_.Custom);
+                    if (value.Valid)
+                    {
+                        TextBlock.Text = "Launching...";
+                        await Task.Run(() => Loader.Launch(value));
+                    }
+                    else await Dialogs.Loader.ShowAsync();
+                }
+                else await Dialogs.Loader.ShowAsync();
+            }
+
+            Button.Visibility = Visibility.Visible;
+            ProgressBar.Visibility = TextBlock.Visibility = Visibility.Collapsed;
+
+            TextBlock.Text = "Preparing...";
+            ProgressBar.Value = default;
+            ProgressBar.IsIndeterminate = true;
+        };
+
+        Application.Current.MainWindow.ContentRendered += async (_, _) =>
+        {
+            await Task.Run(() => _ = Configuration.Current);
+            var catalog = await Catalog.GetAsync();
+
+            Button.Visibility = Visibility.Visible;
+            ProgressBar.Visibility = TextBlock.Visibility = Visibility.Collapsed;
+
+            TextBlock.Text = "Preparing";
+            ProgressBar.Value = default;
+            ProgressBar.IsIndeterminate = true;
+
+            @this.Versions = new(catalog);
+            @this.Settings = new();
+            @this.IsEnabled = true;
         };
     }
 }
