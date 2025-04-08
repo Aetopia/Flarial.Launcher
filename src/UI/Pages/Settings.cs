@@ -13,7 +13,7 @@ sealed class Settings : SimpleStackPanel
         HorizontalAlignment = HorizontalAlignment.Stretch
     };
 
-    readonly ToggleSwitch Lifecycle = new()
+    readonly ToggleSwitch Desktop = new()
     {
         Header = "Prevent the game from being suspended when minimized.",
         VerticalAlignment = VerticalAlignment.Center,
@@ -30,12 +30,13 @@ sealed class Settings : SimpleStackPanel
 
         Build.Items.Add("Release");
         Build.Items.Add("Beta");
+              Build.Items.Add("Custom");
         Build.SelectedIndex = (int)Configuration.Build;
 
-        Lifecycle.IsOn = !Configuration.Lifecycle;
+        Desktop.IsOn = Configuration.Desktop;
 
         Children.Add(Build);
-        Children.Add(Lifecycle);
+        Children.Add(Desktop);
 
         Build.SelectionChanged += (_, _) =>
         {
@@ -43,7 +44,7 @@ sealed class Settings : SimpleStackPanel
             Configuration.Build = (Configuration.Builds)index;
         };
 
-        Lifecycle.Toggled += (_, _) => Configuration.Lifecycle = !Lifecycle.IsOn;
+        Desktop.Toggled += (_, _) => Configuration.Desktop = Desktop.IsOn;
 
         Application.Current.Exit += (_, _) => Configuration.Save();
     }

@@ -7,6 +7,10 @@ namespace Flarial.Launcher.UI;
 
 sealed class Content : NavigationView
 {
+    internal object Home = default;
+
+    internal object Versions = default;
+
     internal Pages.Settings Settings;
 
     internal Content()
@@ -41,9 +45,12 @@ sealed class Content : NavigationView
         {
             switch ((Symbol)args.InvokedItemContainer.Tag)
             {
-                case Symbol.Home: break;
+                case Symbol.Home:
+                    Content = Home;
+                    break;
 
                 case Symbol.List:
+                    Content = Versions;
                     break;
 
                 case Symbol.Setting:

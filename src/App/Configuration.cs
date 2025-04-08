@@ -8,13 +8,13 @@ namespace Flarial.Launcher.App;
 [DataContract]
 internal sealed class Configuration
 {
-    internal enum Builds { Release, Beta }
+    internal enum Builds { Release, Beta, Custom }
 
     [DataMember]
     internal Builds Build = Builds.Release;
 
     [DataMember]
-    internal bool Lifecycle = true;
+    internal bool Desktop = default;
 
     static readonly DataContractJsonSerializer Serializer = new(typeof(Configuration), new DataContractJsonSerializerSettings() { UseSimpleDictionaryFormat = true });
 
@@ -22,7 +22,7 @@ internal sealed class Configuration
     {
         try
         {
-            using var stream = File.OpenRead("Flarial.Launcher.json");
+            using var stream = File.OpenRead("Configuration.json");
             var value = (Configuration)Serializer.ReadObject(stream);
 
             if (!Enum.IsDefined(typeof(Builds), value.Build)) value.Build = default;
@@ -34,7 +34,7 @@ internal sealed class Configuration
 
     internal void Save()
     {
-        using var stream = File.Create("Flarial.Launcher.json");
+        using var stream = File.Create("Configuration.json");
         Serializer.WriteObject(stream, this);
     }
 }
