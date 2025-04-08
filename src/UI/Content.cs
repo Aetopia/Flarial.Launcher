@@ -1,18 +1,19 @@
+using System.Threading.Tasks;
+using System.Windows;
+using Flarial.Launcher.App;
 using ModernWpf.Controls;
 
 namespace Flarial.Launcher.UI;
 
 sealed class Content : NavigationView
 {
-    readonly Pages.Settings Settings;
+    internal Pages.Settings Settings;
 
     internal Content()
     {
         IsSettingsVisible = default;
         IsBackButtonVisible = NavigationViewBackButtonVisible.Collapsed;
         PaneDisplayMode = NavigationViewPaneDisplayMode.Top;
-
-        Settings = new();
 
         MenuItems.Add(new NavigationViewItem
         {
@@ -49,6 +50,12 @@ sealed class Content : NavigationView
                     Content = Settings;
                     break;
             }
+        };
+
+        Application.Current.MainWindow.ContentRendered += async (_, _) =>
+        {
+            Settings = new(await Task.Run(() => Configuration.Deserialize()));
+            IsEnabled = true;
         };
     }
 }

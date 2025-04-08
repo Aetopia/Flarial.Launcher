@@ -16,9 +16,11 @@ static class Program
         CultureInfo.DefaultThreadCurrentCulture = CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
 
         Application application = new();
+       
         application.Resources.MergedDictionaries.Add(new ThemeResources());
         application.Resources.MergedDictionaries.Add(new XamlControlsResources());
         application.Resources.MergedDictionaries.Add(new ColorPaletteResources { TargetTheme = ApplicationTheme.Dark, Accent = Colors.IndianRed, AltHigh = Colors.Red });
+        
         application.Run(new UI.Window());
     }
 }

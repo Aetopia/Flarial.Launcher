@@ -23,16 +23,19 @@ sealed class Settings : SimpleStackPanel
         HorizontalAlignment = HorizontalAlignment.Stretch
     };
 
-    readonly Dictionary<string, object> Graph = new() { ["Build"] = "Release", ["Suspension"] = false };
+    readonly Dictionary<string, object> Value;
 
-    internal Settings()
+    internal Settings(Dictionary<string, object> value)
     {
         Spacing = 12;
         Margin = new(12);
+        Value = value;
 
         Builds.Items.Add("Release");
         Builds.Items.Add("Beta");
-        Builds.SelectedIndex = default;
+        Builds.SelectedIndex = Builds.Items.IndexOf(value["Build"]);
+
+        Suspension.IsOn = (bool)value["Suspension"];
 
         Children.Add(Builds);
         Children.Add(Suspension);
@@ -40,11 +43,11 @@ sealed class Settings : SimpleStackPanel
         Builds.SelectionChanged += (_, _) =>
         {
             var index = Builds.SelectedIndex; if (index is -1) return;
-            Graph["Build"] = Builds.Items[index];
+            Value["Build"] = Builds.Items[index];
         };
 
-        Suspension.Toggled += (_, _) => Graph["Suspension"] = Suspension.IsOn;
+        Suspension.Toggled += (_, _) => Value["Suspension"] = Suspension.IsOn;
 
-        Application.Current.Exit += (_, _) => Configuration.Serialize(Graph);
+        Application.Current.Exit += (_, _) => Configuration.Serialize(Value);
     }
 }

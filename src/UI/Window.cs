@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using System.Windows;
 using ModernWpf;
 using ModernWpf.Controls.Primitives;
@@ -18,6 +19,6 @@ sealed class Window : System.Windows.Window
         WindowStartupLocation = WindowStartupLocation.CenterScreen;
         ResizeMode = ResizeMode.NoResize;
 
-        Content = new Content();
+        Content = new Content() { IsEnabled = default };
     }
 }

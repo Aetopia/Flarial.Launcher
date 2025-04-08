@@ -6,7 +6,10 @@ namespace Flarial.Launcher.App;
 
 static class Configuration
 {
-    static readonly DataContractJsonSerializer Serializer = new(typeof(Dictionary<string, object>), new DataContractJsonSerializerSettings() { UseSimpleDictionaryFormat = true });
+    static readonly DataContractJsonSerializer Serializer = new(typeof(Dictionary<string, object>), new DataContractJsonSerializerSettings()
+    {
+        UseSimpleDictionaryFormat = true
+    });
 
     internal static void Serialize(Dictionary<string, object> value)
     {
