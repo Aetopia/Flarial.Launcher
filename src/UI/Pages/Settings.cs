@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Controls;
 using Flarial.Launcher.App;
 using ModernWpf.Controls;
 
@@ -9,45 +6,45 @@ namespace Flarial.Launcher.UI.Pages;
 
 sealed class Settings : SimpleStackPanel
 {
-    readonly RadioButtons Builds = new()
+    readonly RadioButtons Build = new()
     {
         Header = "Select what dynamic link library should be used:",
         VerticalAlignment = VerticalAlignment.Center,
         HorizontalAlignment = HorizontalAlignment.Stretch
     };
 
-    readonly ToggleSwitch Suspension = new()
+    readonly ToggleSwitch Lifecycle = new()
     {
         Header = "Prevent the game from being suspended when minimized.",
         VerticalAlignment = VerticalAlignment.Center,
         HorizontalAlignment = HorizontalAlignment.Stretch
     };
 
-    readonly Dictionary<string, object> Value;
+    readonly Configuration Configuration;
 
-    internal Settings(Dictionary<string, object> value)
+    internal Settings(Configuration configuration)
     {
-        Spacing = 12;
-        Margin = new(12);
-        Value = value;
+        Configuration = configuration;
 
-        Builds.Items.Add("Release");
-        Builds.Items.Add("Beta");
-        Builds.SelectedIndex = Builds.Items.IndexOf(value["Build"]);
+        Spacing = 12; Margin = new(12);
 
-        Suspension.IsOn = (bool)value["Suspension"];
+        Build.Items.Add("Release");
+        Build.Items.Add("Beta");
+        Build.SelectedIndex = (int)Configuration.Build;
 
-        Children.Add(Builds);
-        Children.Add(Suspension);
+        Lifecycle.IsOn = !Configuration.Lifecycle;
 
-        Builds.SelectionChanged += (_, _) =>
+        Children.Add(Build);
+        Children.Add(Lifecycle);
+
+        Build.SelectionChanged += (_, _) =>
         {
-            var index = Builds.SelectedIndex; if (index is -1) return;
-            Value["Build"] = Builds.Items[index];
+            var index = Build.SelectedIndex; if (index is -1) return;
+            Configuration.Build = (Configuration.Builds)index;
         };
 
-        Suspension.Toggled += (_, _) => Value["Suspension"] = Suspension.IsOn;
+        Lifecycle.Toggled += (_, _) => Configuration.Lifecycle = !Lifecycle.IsOn;
 
-        Application.Current.Exit += (_, _) => Configuration.Serialize(Value);
+        Application.Current.Exit += (_, _) => Configuration.Save();
     }
 }

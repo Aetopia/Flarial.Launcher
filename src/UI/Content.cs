@@ -54,7 +54,7 @@ sealed class Content : NavigationView
 
         Application.Current.MainWindow.ContentRendered += async (_, _) =>
         {
-            Settings = new(await Task.Run(() => Configuration.Deserialize()));
+            Settings = new(await Task.Run(() => Configuration.Get()));
             IsEnabled = true;
         };
     }

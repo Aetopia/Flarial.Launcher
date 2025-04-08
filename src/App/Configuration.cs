@@ -1,25 +1,40 @@
-using System.Collections.Generic;
+using System;
 using System.IO;
+using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 
 namespace Flarial.Launcher.App;
 
-static class Configuration
+[DataContract]
+internal sealed class Configuration
 {
-    static readonly DataContractJsonSerializer Serializer = new(typeof(Dictionary<string, object>), new DataContractJsonSerializerSettings()
-    {
-        UseSimpleDictionaryFormat = true
-    });
+    internal enum Builds { Release, Beta }
 
-    internal static void Serialize(Dictionary<string, object> value)
+    [DataMember]
+    internal Builds Build = Builds.Release;
+
+    [DataMember]
+    internal bool Lifecycle = true;
+
+    static readonly DataContractJsonSerializer Serializer = new(typeof(Configuration), new DataContractJsonSerializerSettings() { UseSimpleDictionaryFormat = true });
+
+    internal static Configuration Get()
     {
-        using var stream = File.Create("Flarial.Launcher.json");
-        Serializer.WriteObject(stream, value);
+        try
+        {
+            using var stream = File.OpenRead("Flarial.Launcher.json");
+            var value = (Configuration)Serializer.ReadObject(stream);
+
+            if (!Enum.IsDefined(typeof(Builds), value.Build)) value.Build = default;
+            return value;
+        }
+        catch { }
+        return new();
     }
 
-    internal static Dictionary<string, object> Deserialize()
+    internal void Save()
     {
-        using var stream = File.OpenRead("Flarial.Launcher.json");
-        return (Dictionary<string, object>)Serializer.ReadObject(stream);
+        using var stream = File.Create("Flarial.Launcher.json");
+        Serializer.WriteObject(stream, this);
     }
 }
