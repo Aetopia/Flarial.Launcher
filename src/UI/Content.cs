@@ -1,23 +1,20 @@
-using System.Threading.Tasks;
-using System.Windows;
-using Flarial.Launcher.App;
+using Flarial.Launcher.SDK;
 using ModernWpf.Controls;
 
 namespace Flarial.Launcher.UI;
 
 sealed class Content : NavigationView
 {
-    internal object Home = default;
-
-    internal object Versions = default;
+    internal Pages.Home Home;
 
     internal Pages.Settings Settings;
 
     internal Content()
     {
-        IsSettingsVisible = default;
+        IsSettingsVisible = IsEnabled = default;
         IsBackButtonVisible = NavigationViewBackButtonVisible.Collapsed;
         PaneDisplayMode = NavigationViewPaneDisplayMode.Top;
+        Content = new Startup(this);
 
         MenuItems.Add(new NavigationViewItem
         {
@@ -25,13 +22,6 @@ sealed class Content : NavigationView
             Content = "Home",
             Tag = Symbol.Home,
             IsSelected = true
-        });
-
-        MenuItems.Add(new NavigationViewItem
-        {
-            Icon = new SymbolIcon(Symbol.List),
-            Content = "Versions",
-            Tag = Symbol.List,
         });
 
         FooterMenuItems.Add(new NavigationViewItem
@@ -49,20 +39,10 @@ sealed class Content : NavigationView
                     Content = Home;
                     break;
 
-                case Symbol.List:
-                    Content = Versions;
-                    break;
-
                 case Symbol.Setting:
                     Content = Settings;
                     break;
             }
-        };
-
-        Application.Current.MainWindow.ContentRendered += async (_, _) =>
-        {
-            Settings = new(await Task.Run(() => Configuration.Get()));
-            IsEnabled = true;
         };
     }
 }

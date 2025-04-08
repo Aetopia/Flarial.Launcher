@@ -6,6 +6,7 @@
     <LangVersion>latest</LangVersion>
     <UseWPF>true</UseWPF>
 
+    <PlatformTarget>x64</PlatformTarget>
     <ApplicationManifest>Resources\app.manifest</ApplicationManifest>
     <ApplicationIcon>Resources\app.ico</ApplicationIcon>
     <SatelliteResourceLanguages>XXX</SatelliteResourceLanguages>
@@ -20,6 +21,7 @@
 
   <ItemGroup>
     <PackageReference Include="Costura.Fody" Version="*" PrivateAssets="All" />
+    <PackageReference Include="Flarial.Launcher.SDK" Version="*" />
     <PackageReference Include="ModernWpfUI" Version="*" />
   </ItemGroup>
 

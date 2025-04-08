@@ -5,11 +5,11 @@ using System.Xml;
 
 namespace Flarial.Launcher.App;
 
-[DataContract]
-internal sealed class Configuration
-{
-    internal enum Builds { Release, Beta, Custom }
+enum Builds { Release, Beta }
 
+[DataContract]
+sealed class Configuration
+{
     [DataMember]
     internal Builds Build = Builds.Release;
 
@@ -23,7 +23,11 @@ internal sealed class Configuration
 
     static readonly XmlWriterSettings Settings = new() { Indent = true };
 
-    internal static Configuration Get()
+    static Configuration Object;
+
+    internal static Configuration Current => Object ??= Get();
+
+    static Configuration Get()
     {
         try
         {
@@ -37,9 +41,9 @@ internal sealed class Configuration
         return new();
     }
 
-    internal void Save()
+    internal static void Save()
     {
         using var writer = XmlWriter.Create("Configuration.xml", Settings);
-        Serializer.WriteObject(writer, this);
+        Serializer.WriteObject(writer, Current);
     }
 }

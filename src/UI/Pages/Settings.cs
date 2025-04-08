@@ -20,20 +20,17 @@ sealed class Settings : SimpleStackPanel
         HorizontalAlignment = HorizontalAlignment.Stretch
     };
 
-    readonly Configuration Configuration;
-
-    internal Settings(Configuration configuration)
+    internal Settings()
     {
-        Configuration = configuration;
+        var configuration = Configuration.Current;
 
         Spacing = 12; Margin = new(12);
 
         Build.Items.Add("Release");
         Build.Items.Add("Beta");
-        Build.Items.Add("Custom");
-        Build.SelectedIndex = (int)Configuration.Build;
+        Build.SelectedIndex = (int)configuration.Build;
 
-        Desktop.IsOn = Configuration.Desktop;
+        Desktop.IsOn = configuration.Desktop;
 
         Children.Add(Build);
         Children.Add(Desktop);
@@ -41,10 +38,10 @@ sealed class Settings : SimpleStackPanel
         Build.SelectionChanged += (_, _) =>
         {
             var index = Build.SelectedIndex; if (index is -1) return;
-            Configuration.Build = (Configuration.Builds)index;
+            configuration.Build = (Builds)index;
         };
 
-        Desktop.Toggled += (_, _) => Configuration.Desktop = Desktop.IsOn;
+        Desktop.Toggled += (_, _) => configuration.Desktop = Desktop.IsOn;
 
         Application.Current.Exit += (_, _) => Configuration.Save();
     }
