@@ -13,4 +13,10 @@ static class Configuration
         using var stream = File.Create("Flarial.Launcher.json");
         Serializer.WriteObject(stream, value);
     }
+
+    internal static Dictionary<string, object> Deserialize()
+    {
+        using var stream = File.OpenRead("Flarial.Launcher.json");
+        return (Dictionary<string, object>)Serializer.ReadObject(stream);
+    }
 }
