@@ -76,15 +76,19 @@ sealed class Home : Grid
 
             if (_.Build is Build.Release or Build.Beta)
             {
-                await Client.DownloadAsync(_.Build is Build.Beta, (_) => Dispatcher.Invoke(() =>
+                if (await @this.Versions.Catalog.CompatibleAsync())
                 {
-                    if (ProgressBar.Value == _) return;
-                    if (ProgressBar.IsIndeterminate) ProgressBar.IsIndeterminate = false;
-                    TextBlock.Text = $"Downloading.. {ProgressBar.Value = _}%";
-                }));
+                    await Client.DownloadAsync(_.Build is Build.Beta, (_) => Dispatcher.Invoke(() =>
+                    {
+                        if (ProgressBar.Value == _) return;
+                        if (ProgressBar.IsIndeterminate) ProgressBar.IsIndeterminate = false;
+                        TextBlock.Text = $"Downloading.. {ProgressBar.Value = _}%";
+                    }));
 
-                TextBlock.Text = "Launching..."; ProgressBar.IsIndeterminate = true;
-                await Logger.InformationAsync($"Launched {(await Client.LaunchAsync(_.Build is Build.Beta) ? "successfully" : "unsuccessfully")}.");
+                    TextBlock.Text = "Launching..."; ProgressBar.IsIndeterminate = true;
+                    await Logger.InformationAsync($"Launched {(await Client.LaunchAsync(_.Build is Build.Beta) ? "successfully" : "unsuccessfully")}.");
+                }
+                else await Dialogs.UnsupportedAsync();
             }
             else
             {
