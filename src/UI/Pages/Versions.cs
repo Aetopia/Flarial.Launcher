@@ -48,17 +48,17 @@ sealed class Versions : Grid
 
         Installation.Install.Click += async (_, _) =>
         {
+            await Logger.InformationAsync($"An installation request for \"{ListBox.SelectedItem}\" has been created.");
+
             if (!Game.Installed)
             {
-                Log.Current.Write("Minecraft isn't installed.");
-                await Dialogs.Installed.ShowAsync();
+                await Dialogs.InstalledAsync();
                 return;
             }
 
             if (Game.Unpackaged)
             {
-                Log.Current.Write("Minecraft is unpackaged.");
-                await Dialogs.Unpackaged.ShowAsync();
+                await Dialogs.UnpackagedAsync();
                 return;
             }
 
@@ -73,10 +73,12 @@ sealed class Versions : Grid
                 Installation.Progress.Value = _;
             })))
             {
-                Log.Current.Write($"An installation request has created for {ListBox.SelectedItem}.");
+                await Logger.InformationAsync($"An installation request for \"{ListBox.SelectedItem}\" is being processed.");
+
                 Installation.Cancel.IsEnabled = true;
                 await Request; Request = default;
-                Log.Current.Write($"An installation request has finished for {ListBox.SelectedItem}.");
+
+                await Logger.InformationAsync($"An installation request for \"{ListBox.SelectedItem}\" is now finished.");
             }
 
             Installation.Progress.Value = default;
@@ -89,7 +91,7 @@ sealed class Versions : Grid
         Installation.Cancel.Click += async (_, _) =>
         {
             Installation.Cancel.IsEnabled = default;
-            Log.Current.Write($"An installation request has been canceled for {ListBox.SelectedItem}.");
+            await Logger.InformationAsync($"An installation request for \"{ListBox.SelectedItem}\" has been canceled.");
             await Task.Run(Request.Cancel);
         };
 

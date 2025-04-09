@@ -61,21 +61,21 @@ sealed class Home : Grid
 
         Button.Click += async (_, _) =>
         {
+            var _ = Configuration.Current;
+
+            await Logger.InformationAsync($"Trying to launching with {_.Build} DLL.");
+
             if (!Game.Installed)
             {
-                Log.Current.Write("Minecraft isn't installed.");
-                await Dialogs.Installed.ShowAsync();
+                await Dialogs.InstalledAsync();
                 return;
             }
 
-            var _ = Configuration.Current;
             Button.Visibility = Visibility.Collapsed;
             ProgressBar.Visibility = TextBlock.Visibility = Visibility.Visible;
 
             if (_.Build is Build.Release or Build.Beta)
             {
-                Log.Current.Write($"Trying to launch {(_.Build is Build.Beta ? "Beta" : "Release")}.");
-
                 await Client.DownloadAsync(_.Build is Build.Beta, (_) => Dispatcher.Invoke(() =>
                 {
                     if (ProgressBar.Value == _) return;
@@ -84,27 +84,21 @@ sealed class Home : Grid
                 }));
 
                 TextBlock.Text = "Launching..."; ProgressBar.IsIndeterminate = true;
-
-                Log.Current.Write($"Launching Minecraft with Flarial Client.");
-                await Client.LaunchAsync(_.Build is Build.Beta);
+                await Logger.InformationAsync($"Launched {(await Client.LaunchAsync(_.Build is Build.Beta) ? "successfully" : "unsuccessfully")}.");
             }
             else
             {
-                Log.Current.Write($"Trying to use '{_.Custom} as the custom DLL.'");
-
                 if (!string.IsNullOrEmpty(_.Custom))
                 {
                     Library value = new(_.Custom);
                     if (value.Valid)
                     {
                         TextBlock.Text = "Launching...";
-
-                        Log.Current.Write($"Launching Minecraft with Custom DLL.");
-                        await Task.Run(() => Loader.Launch(value));
+                        await Logger.InformationAsync($"Launched {(await Task.Run(() => Loader.Launch(value).HasValue) ? "successfully" : "unsuccessfully")}.");
                     }
-                    else await Dialogs.Loader.ShowAsync();
+                    else await Dialogs.LoaderAsync();
                 }
-                else await Dialogs.Loader.ShowAsync();
+                else await Dialogs.LoaderAsync();
             }
 
             Button.Visibility = Visibility.Visible;
@@ -117,23 +111,17 @@ sealed class Home : Grid
 
         Application.Current.MainWindow.ContentRendered += async (_, _) =>
         {
+            await Logger.InformationAsync("Reading from configuration file.");
             await Task.Run(() => _ = Configuration.Current);
 
-            Log.Current.Write("Acquire the latest version catalog.");
-            var catalog = await Catalog.GetAsync();
+            await Logger.InformationAsync("Acquiring version catalog.");
+            @this.Versions = new(await Catalog.GetAsync());
+
+            await Logger.InformationAsync("Finished initialization.");
 
             Button.Visibility = Visibility.Visible;
             ProgressBar.Visibility = TextBlock.Visibility = Visibility.Collapsed;
-
-            TextBlock.Text = "Preparing...";
-            ProgressBar.Value = default;
-            ProgressBar.IsIndeterminate = true;
-
-            @this.Versions = new(catalog);
-            @this.Settings = new();
             @this.IsEnabled = true;
-
-            Log.Current.Write("The launcher is now ready to use.");
         };
     }
 }

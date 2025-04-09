@@ -42,17 +42,11 @@ sealed class Configuration
                 {
                     try
                     {
-                        using var stream = File.OpenRead("Configuration.xml");
+                        using var stream = File.OpenRead("Launcher.xml");
                         Object = (Configuration)Serializer.ReadObject(stream);
                         if (!Enum.IsDefined(typeof(Build), Object.Build)) Object.Build = default;
                     }
-                    catch (Exception _)
-                    {
-                        Log.Current.Write($"{_}");
-                        Object = new();
-                    }
-
-                    Log.Current.Write($"Configuration is \"Build: {Object.Build}, Debug: {Object.Debug}, Custom: '{Object.Custom}'\".");
+                    catch { Object = new(); }
                 }
             }
             return Object;
@@ -61,8 +55,7 @@ sealed class Configuration
 
     internal static void Save()
     {
-        Log.Current.Write($"Configuration is \"Build: {Object.Build}, Debug: {Object.Debug}, Custom: '{Object.Custom}'\".");
-        using var writer = XmlWriter.Create("Configuration.xml", Settings);
+        using var writer = XmlWriter.Create("Launcher.xml", Settings);
         Serializer.WriteObject(writer, Current);
     }
 

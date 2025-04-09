@@ -5,11 +5,11 @@ namespace Flarial.Launcher.UI;
 
 sealed class Content : NavigationView
 {
-    internal Pages.Home Home;
+    internal readonly Pages.Home Home;
 
     internal Pages.Versions Versions;
 
-    internal Pages.Settings Settings;
+    internal readonly Pages.Settings Settings = new();
 
     internal Content()
     {

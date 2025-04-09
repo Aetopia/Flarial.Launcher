@@ -5,7 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 namespace Flarial.Launcher.UI.Controls;
 
-sealed class Installation: Grid
+sealed class Installation : Grid
 {
     internal readonly Button Install = new()
     {
@@ -42,9 +42,9 @@ sealed class Installation: Grid
         SetColumn(Install, 0);
         Children.Add(Install);
 
-        SetRow( Progress , 0);
-        SetColumn( Progress , 0);
-        Children.Add( Progress );
+        SetRow(Progress, 0);
+        SetColumn(Progress, 0);
+        Children.Add(Progress);
 
         SetRow(Cancel, 0);
         SetColumn(Cancel, 1);
