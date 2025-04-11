@@ -34,6 +34,7 @@ static class Dialogs
         Title = "We don't support this version of Minecraft.",
         Content = @"Looks like the currently installed version of Minecraft is unsupported.
 • Wait for the list of supported versions to be updated.
+• Switch to a version of Minecraft that Flarial Client supports.
 • Try restarting the launcher to refresh the list of supported versions.",
         CloseButtonText = "Close"
     };

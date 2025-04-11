@@ -58,6 +58,13 @@ sealed class Home : Grid
         Children.Add(ProgressBar);
         Children.Add(TextBlock);
         Children.Add(Button);
+        Children.Add(new TextBlock
+        {
+            Text = Manifest.Version,
+            VerticalAlignment = VerticalAlignment.Bottom,
+            HorizontalAlignment = HorizontalAlignment.Right,
+            Margin = new(0, 0, 12, 12)
+        });
 
         Button.Click += async (_, _) =>
         {
@@ -82,7 +89,7 @@ sealed class Home : Grid
                     {
                         if (ProgressBar.Value == _) return;
                         if (ProgressBar.IsIndeterminate) ProgressBar.IsIndeterminate = false;
-                        TextBlock.Text = $"Downloading.. {ProgressBar.Value = _}%";
+                        TextBlock.Text = $"Downloading... {ProgressBar.Value = _}%";
                     }));
 
                     TextBlock.Text = "Launching..."; ProgressBar.IsIndeterminate = true;
@@ -115,6 +122,18 @@ sealed class Home : Grid
 
         Application.Current.MainWindow.ContentRendered += async (_, _) =>
         {
+            if (false && await SDK.Launcher.AvailableAsync())
+            {
+                await Logger.InformationAsync("An update is available for the launcher.");
+                await SDK.Launcher.UpdateAsync((_) =>
+                {
+                    if (ProgressBar.Value == _) return;
+                    if (ProgressBar.IsIndeterminate) ProgressBar.IsIndeterminate = false;
+                    TextBlock.Text = $"Updating... {ProgressBar.Value = _}%";
+                });
+                return;
+            }
+
             await Logger.InformationAsync("Reading from configuration file.");
             await Task.Run(() => _ = Configuration.Current);
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows;
@@ -17,7 +18,8 @@ static class Program
     [STAThread]
     static void Main()
     {
-        Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;
+        var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Flarial\Launcher");
+        Directory.CreateDirectory(path); Environment.CurrentDirectory = path;
         CultureInfo.DefaultThreadCurrentCulture = CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
 
         using (new Mutex(default, "BC3F9461-563D-4EBD-982D-7AE54C80310C", out var value))

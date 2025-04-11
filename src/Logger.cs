@@ -15,6 +15,8 @@ sealed class Logger
 
     readonly StreamWriter Writer = new("Launcher.log") { AutoFlush = true };
 
+    Logger() => AppDomain.CurrentDomain.ProcessExit += (_, _) => Writer.Dispose();
+
     internal static Logger Current { get { lock (_) return Object ??= new(); } }
 
     static void Write(string value)
@@ -36,7 +38,6 @@ sealed class Logger
     internal static void Warning(string value) => Write($"[Warning][{DateTime.UtcNow}] {value}");
 
     internal static void Error(string value) => Write($"[Error][{DateTime.UtcNow}] {value}");
-
 
     internal static async Task InformationAsync(string value) => await WriteAsync($"[Information][{DateTime.UtcNow}] {value}");
 
