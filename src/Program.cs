@@ -22,7 +22,7 @@ static class Program
         var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Flarial\Launcher");
         Directory.CreateDirectory(path); Environment.CurrentDirectory = path;
 
-        using (new Mutex(default, "BC3F9461-563D-4EBD-982D-7AE54C80310C", out var value))
+        using (new Mutex(default, "54874D29-646C-4536-B6D1-8E05053BE00E", out var value))
         {
             if (!value) return; _ = Logger.Current;
 
