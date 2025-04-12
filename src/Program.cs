@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows;
-using System.Windows.Interop;
 using System.Windows.Media;
 using Flarial.Launcher.App;
 using ModernWpf;

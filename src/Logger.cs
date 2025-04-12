@@ -13,7 +13,7 @@ sealed class Logger
 
     static Logger Object;
 
-    readonly StreamWriter Writer = new("Launcher.log") { AutoFlush = true };
+    readonly StreamWriter Writer = new("Flarial.Launcher.log") { AutoFlush = true };
 
     Logger() => AppDomain.CurrentDomain.ProcessExit += (_, _) => Writer.Dispose();
 

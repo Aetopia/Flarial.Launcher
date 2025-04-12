@@ -15,7 +15,7 @@ sealed class Content : NavigationView
     {
         IsSettingsVisible = IsEnabled = default;
         IsBackButtonVisible = NavigationViewBackButtonVisible.Collapsed;
-        PaneDisplayMode = NavigationViewPaneDisplayMode.Top;
+        PaneDisplayMode = NavigationViewPaneDisplayMode.LeftCompact;
         Content = Home = new(this);
 
         MenuItems.Add(new NavigationViewItem

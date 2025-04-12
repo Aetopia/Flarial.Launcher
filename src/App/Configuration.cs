@@ -42,7 +42,7 @@ sealed class Configuration
                 {
                     try
                     {
-                        using var stream = File.OpenRead("Launcher.xml");
+                        using var stream = File.OpenRead("Flarial.Launcher.xml");
                         Object = (Configuration)Serializer.ReadObject(stream);
                         if (!Enum.IsDefined(typeof(Build), Object.Build)) Object.Build = default;
                     }
@@ -55,7 +55,7 @@ sealed class Configuration
 
     internal static void Save()
     {
-        using var writer = XmlWriter.Create("Launcher.xml", Settings);
+        using var writer = XmlWriter.Create("Flarial.Launcher.xml", Settings);
         Serializer.WriteObject(writer, Current);
     }
 

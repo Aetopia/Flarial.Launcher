@@ -19,7 +19,7 @@ sealed class Home : Grid
         Width = Manifest.Icon.Width / 2,
         Height = Manifest.Icon.Height / 2,
         VerticalAlignment = VerticalAlignment.Center,
-        Margin = new(0, 0, 0, 75)
+        Margin = new(0, 0, 0, 120)
     };
 
     readonly Modern.ProgressBar ProgressBar = new()
@@ -29,7 +29,7 @@ sealed class Home : Grid
         VerticalAlignment = VerticalAlignment.Center,
         HorizontalAlignment = HorizontalAlignment.Center,
         IsIndeterminate = true,
-        Margin = new(0, 125, 0, 0),
+        Margin = new(0, 120, 0, 0),
         Visibility = Visibility.Visible
     };
 
@@ -38,7 +38,7 @@ sealed class Home : Grid
         Text = "Preparing...",
         VerticalAlignment = VerticalAlignment.Center,
         HorizontalAlignment = HorizontalAlignment.Center,
-        Margin = new(0, 175, 0, 0),
+        Margin = new(0, 60, 0, 0),
         Visibility = Visibility.Visible
     };
 
@@ -48,7 +48,7 @@ sealed class Home : Grid
         HorizontalAlignment = HorizontalAlignment.Center,
         Content = new SymbolIcon(Symbol.Play),
         Width = Manifest.Icon.Width * 2,
-        Margin = new(0, 125, 0, 0),
+        Margin = new(0, 120, 0, 0),
         Visibility = Visibility.Collapsed
     };
 

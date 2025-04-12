@@ -28,7 +28,7 @@ sealed class Window : System.Windows.Window
 
         Icon = Manifest.Icon;
         Title = $"Flarial Launcher";
-        Width = 960 * 0.75; Height = 540 * 0.75;
+        Width = 960; Height = 540;
         UseLayoutRounding = SnapsToDevicePixels = true;
         WindowStartupLocation = WindowStartupLocation.CenterScreen;
         ResizeMode = ResizeMode.NoResize;
