@@ -18,9 +18,9 @@ static class Program
     [STAThread]
     static void Main()
     {
+        CultureInfo.DefaultThreadCurrentCulture = CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
         var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Flarial\Launcher");
         Directory.CreateDirectory(path); Environment.CurrentDirectory = path;
-        CultureInfo.DefaultThreadCurrentCulture = CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
 
         using (new Mutex(default, "BC3F9461-563D-4EBD-982D-7AE54C80310C", out var value))
         {
