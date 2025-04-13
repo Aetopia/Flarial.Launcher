@@ -1,4 +1,3 @@
-using Flarial.Launcher.SDK;
 using ModernWpf.Controls;
 
 namespace Flarial.Launcher.UI;
@@ -13,7 +12,7 @@ sealed class Content : NavigationView
 
     internal Content()
     {
-        IsSettingsVisible = IsEnabled = default;
+        IsPaneOpen = IsSettingsVisible = IsEnabled = default;
         IsBackButtonVisible = NavigationViewBackButtonVisible.Collapsed;
         PaneDisplayMode = NavigationViewPaneDisplayMode.LeftCompact;
         Content = Home = new(this);
