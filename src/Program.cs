@@ -15,12 +15,10 @@ static class Program
     [STAThread]
     static void Main()
     {
-        CultureInfo.DefaultThreadCurrentCulture = CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
-        var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Flarial\Launcher");
-        Directory.CreateDirectory(path); Environment.CurrentDirectory = path;
-
         using (new Mutex(default, "54874D29-646C-4536-B6D1-8E05053BE00E", out var value))
         {
+            CultureInfo.DefaultThreadCurrentCulture = CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
+            Environment.CurrentDirectory = Directory.CreateDirectory(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Flarial\Launcher")).FullName;
             if (!value) return; _ = Logger.Current;
 
             Application application = new();

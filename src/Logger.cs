@@ -13,11 +13,21 @@ sealed class Logger
 
     static Logger Object;
 
-    readonly StreamWriter Writer = new("Flarial.Launcher.log") { AutoFlush = true };
+    readonly StreamWriter Writer = new($@"Logs\{DateTime.UtcNow:yyyyMMddTHHmmss}.log") { AutoFlush = true };
 
     Logger() => AppDomain.CurrentDomain.ProcessExit += (_, _) => Writer.Dispose();
 
-    internal static Logger Current { get { lock (_) return Object ??= new(); } }
+    internal static Logger Current
+    {
+        get
+        {
+            lock (_)
+            {
+                if (Object is null) { Directory.CreateDirectory("Logs"); Object = new(); }
+                return Object;
+            }
+        }
+    }
 
     static void Write(string value)
     {
