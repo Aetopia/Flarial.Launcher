@@ -85,7 +85,10 @@ sealed class Home : Grid
             {
                 if (await @this.Versions.Catalog.CompatibleAsync())
                 {
-                    await Client.DownloadAsync(_.Build is Build.Beta, (_) => Dispatcher.Invoke(() =>
+                    var @this = _.Build is Build.Beta;
+                    await Logger.InformationAsync($"Updating & launching {(@this ? "beta" : "release")} for Minecraft {await Task.Run(() => Minecraft.Version)}.");
+
+                    await Client.DownloadAsync(@this, (_) => Dispatcher.Invoke(() =>
                     {
                         if (ProgressBar.Value == _) return;
                         if (ProgressBar.IsIndeterminate) ProgressBar.IsIndeterminate = false;
@@ -93,7 +96,7 @@ sealed class Home : Grid
                     }));
 
                     TextBlock.Text = "Launching..."; ProgressBar.IsIndeterminate = true;
-                    await Logger.InformationAsync($"Launched {(await Client.LaunchAsync(_.Build is Build.Beta) ? "successfully" : "unsuccessfully")}.");
+                    await Logger.InformationAsync($"Launched {(await Client.LaunchAsync(@this) ? "successfully" : "unsuccessfully")}.");
                 }
                 else await Dialogs.UnsupportedAsync();
             }
