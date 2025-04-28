@@ -123,23 +123,14 @@ sealed class Home : Grid
             ProgressBar.IsIndeterminate = true;
         };
 
-        Application.Current.MainWindow.ContentRendered += async (_, _) =>
+        Application.Current.MainWindow.SourceInitialized += async (_, _) =>
         {
-            if (false && await SDK.Launcher.AvailableAsync())
-            {
-                await Logger.InformationAsync("An update is available for the launcher.");
-                await SDK.Launcher.UpdateAsync((_) =>
-                {
-                    if (ProgressBar.Value == _) return;
-                    if (ProgressBar.IsIndeterminate) ProgressBar.IsIndeterminate = false;
-                    TextBlock.Text = $"Updating... {ProgressBar.Value = _}%";
-                });
-                return;
-            }
-
             await Logger.InformationAsync("Reading from configuration file.");
             await Task.Run(() => _ = Configuration.Current);
+        };
 
+        Application.Current.MainWindow.ContentRendered += async (_, _) =>
+        {
             await Logger.InformationAsync("Acquiring version catalog.");
             @this.Versions = new(await Catalog.GetAsync());
 
