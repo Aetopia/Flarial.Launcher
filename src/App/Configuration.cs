@@ -1,6 +1,8 @@
 using System;
 using System.IO;
 using System.Runtime.Serialization;
+using System.Windows.Interop;
+using System.Windows.Media;
 using System.Xml;
 using Bedrockix.Minecraft;
 
@@ -23,7 +25,7 @@ sealed class Configuration
     {
         get { lock (_) return field; }
         set { lock (_) { field = value; if (Game.Installed) Game.Debug = field; } }
-    }
+    } = true;
 
     [DataMember]
     internal string Custom
@@ -31,6 +33,13 @@ sealed class Configuration
         get { lock (_) return field; }
         set { lock (_) field = value; }
     }
+
+    [DataMember]
+    internal bool Hardware
+    {
+        get { lock (_) return field; }
+        set { lock (_) RenderOptions.ProcessRenderMode = (field = value) ? RenderMode.Default : RenderMode.SoftwareOnly; }
+    } = true;
 
     internal static Configuration Current
     {

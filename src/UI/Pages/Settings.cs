@@ -20,6 +20,13 @@ sealed class Settings : SimpleStackPanel
         HorizontalAlignment = HorizontalAlignment.Stretch
     };
 
+    readonly ToggleSwitch Hardware = new()
+    {
+        Header = "Configure whether the launcher should use hardware acceleration.",
+        VerticalAlignment = VerticalAlignment.Stretch,
+        HorizontalAlignment = HorizontalAlignment.Stretch
+    };
+
     readonly Controls.Custom Custom = new()
     {
         VerticalAlignment = VerticalAlignment.Stretch,
@@ -39,6 +46,7 @@ sealed class Settings : SimpleStackPanel
         Children.Add(Build);
         Children.Add(Custom);
         Children.Add(Debug);
+        Children.Add(Hardware);
 
         Build.SelectionChanged += (_, _) =>
         {
@@ -47,8 +55,10 @@ sealed class Settings : SimpleStackPanel
         };
 
         Debug.Toggled += (_, _) => { _.Debug = Debug.IsOn; };
+        Hardware.Toggled += (_, _) => { _.Hardware = Hardware.IsOn; };
 
         Build.SelectedIndex = (int)_.Build;
         Debug.IsOn = _.Debug;
+        Hardware.IsOn = _.Hardware;
     }
 }

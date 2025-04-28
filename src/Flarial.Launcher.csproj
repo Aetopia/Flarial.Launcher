@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <TargetFramework>net481</TargetFramework>
     <LangVersion>preview</LangVersion>
     <UseWPF>true</UseWPF>
@@ -25,7 +25,7 @@
 
   <ItemGroup>
     <PackageReference Include="Costura.Fody" Version="6.0.0" PrivateAssets="All" />
-    <PackageReference Include="Flarial.Launcher.SDK" Version="1.6.0" />
+    <PackageReference Include="Flarial.Launcher.SDK" Version="1.6.7.5" />
     <PackageReference Include="ModernWpfUI" Version="0.9.6" />
   </ItemGroup>
 
